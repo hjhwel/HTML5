@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>07-jQueryDOM操作相关方法</title>
+    <!--<script src="hjhjQuery/jquery-1.12.4.js"></script>-->
+    <script src="hjhjQuery/hjhjQ-1.0.0.js"></script>
+    <script>
+        hjh(function () {
+            /*
+             DOM 操作:
+             1、empty ==> 清空指定元素中的所有内容
+             2、remove ==> 删除所有的元素或指定元素
+             */
+            var btn = document.getElementsByTagName("button")[0];
+            btn.onclick = function () {
+
+               // hjh(".box").empty();
+               //  console.log(hjh("div").empty());
+
+                // hjh(".box").remove();
+                // console.log(hjh("p").remove(".box"));
+                // hjh("div").remove(" .box   ");
+                // console.log('ddd')
+                // console.log(hjh('p').html('ddd'));
+                // console.log($('div').html());
+                // console.log(hjh('div').text());
+                console.log(hjh('div').text('<span>sss</span>'));
+            }
+        });
+    </script>
+
+
+</head>
+<body>
+<button>调用remove</button>
+<div>
+    我是div1
+    <p>我是段落2</p>
+</div>
+<div>
+    我是div
+    <p>我是段落
+    <span>soan</span></p>
+</div>
+<div class="box">
+    我是div
+    <p>我是段落</p>
+</div>
+<p class="box">pb</p>
+</body>
+</html>

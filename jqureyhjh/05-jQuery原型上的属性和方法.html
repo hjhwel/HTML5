@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>06-jQuery原型上的属性和方法</title>
+    <!--<script src="hjhjQuery/jquery-1.12.4.js"></script>-->
+    <script src="hjhjQuery/hjhjQ-1.0.0.js"></script>
+    <script>
+        hjh(function () {
+            /*
+             jQ原型上的核心方法和属性：
+             1、jquery 获取jQ版本号
+             2、selector 实例默认的选择器取值
+             3、length 实例默认的长度
+             3、push 给实例添加新元素
+             4、sort 对实例中的元素进行排序
+             5、splice 按照指定下标指定数量删除元素，也可以替换删除的元素
+
+             6、toArray 把实例转换为数组返回
+             7、get  获取指定下标的元素，获取的是原生DOM
+
+             6、eq 获取指定下标的元素，获取的是jQuery类型的实例对象
+             7、first 获取实例中的第一个元素，是jQuery类型的实例对象
+             8、last 获取实例中的最后一个元素，是jQuery类型的实例对象
+
+             9、each 遍历实例，把遍历到的数据传给回调使用
+             10、map  遍历实例，把遍历到的数据传给回调使用，然后把回调的返回值收集起来组成一个新的数组返回
+         * */
+            // console.log($().jquery)
+            // console.log(HJH().HJH);
+            // var arr = [0,2,8,5,6]
+            // // console.log(arr.sort());
+            // var hjharr = hjh(arr)
+            // console.log(hjharr.push(55));
+            // console.log(hjharr)
+
+            // var res2 = res.toArray1();
+            // console.log(res2);
+
+            // var res = hjh("div");
+            // console.log(res.get());
+            // console.log(res.get(1));
+            // console.log(res.get(-3));
+            // var res = $('div');
+            // console.log(res.eq());
+            // console.log(res.eq(0));
+
+            // var res = hjh('div')
+            // console.log(res);
+            // console.log(res.first());
+            // console.log(res.last());
+            var arr = [0,1,202,0,1,603,101,2,56,5];
+            var likearr = {0:[0,1,2,5],1:"ss",2:"3rr",3:"563",length:4}
+            var obj = {"a":"23","b":"45","c":"09"}
+            /*
+            hjh.each(arr,function (index,val) {
+
+                console.log(this + 1)
+            })
+
+            hjh.each(likearr,function (index,val) {
+                console.log(index,val)
+            })
+
+            hjh.each(obj,function (index,val) {
+                if (index == "a"){
+                    return true;
+                }
+                console.log(index,val)
+            })
+            */
+            // console.log(hjh(obj).each(function (index,val) {
+            //     console.log(index,val)
+            // }))
+            // var res = $.map(arr,function (index,val) {
+            //     return index +11
+            // })
+            var res = hjh.map(arr,function (val,index) {
+                return 11
+            })
+            console.log(res);
+        })
+    </script>
+</head>
+<body>
+<div id="box1"></div>
+<div id="box2"></div>
+<div id="box3"></div>
+</body>
+</html>

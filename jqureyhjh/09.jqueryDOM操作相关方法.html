@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <!--<script src="hjhjQuery/jquery-1.12.4.js"></script>-->
+    <script src="hjhjQuery/hjhjQ-1.0.0.js"></script>
+    <script>
+        window.onload = function () {
+            var btn = document.getElementsByTagName("button")[0];
+            btn.onclick = function () {
+
+                // $('.item').append('p');
+                // $('.item').append('<li>ddd</li>');
+                // $('.item').append($('ddd'));
+                // console.log($('.item').append('p'));
+
+                // hjh('.item').append(hjh('p'));
+                // hjh('.item').append("dd");
+                hjh('.item').prepend(hjh('p'));
+                // hjh(".item").append("<span>我是span</span>");
+                // console.log(hjh('.item').append('p'));
+
+                // var divs = document.querySelectorAll("div");
+                // var ps = document.querySelectorAll("p");
+                // hjh(divs).append(ps);
+            }
+        }
+    </script>
+</head>
+<body>
+<button>调用append</button>
+<p>我是段落</p>
+<p>我是段落</p>
+<div class="item">
+    <li>1我是第1个li</li>
+    <li>1我是第2个li</li>
+    <li>1我是第3个li</li>
+</div>
+<div class="item">
+    <li>1我是第1个li</li>
+    <li>1我是第2个li</li>
+    <li>1我是第3个li</li>
+</div>
+<div class="item">
+    <li>1我是第1个li</li>
+    <li>1我是第2个li</li>
+    <li>1我是第3个li</li>
+</div><div class="item">
+    <li>1我是第1个li</li>
+    <li>1我是第2个li</li>
+    <li>1我是第3个li</li>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>apply和call方法</title>
+    <script>
+        /**
+         * apply 和 call 就是用来修改方法里this指向的
+         * apply只能接收两个参，第一个是要指向的对象，第二个是个数组，其他参数都放数组里，然后依次取出，传给形参
+         * call 可以接收多个参数，第一个也是要指向的对象，后面的对应形参
+         */
+        function test() {
+            console.log(this)
+            //this就是谁调用就指向谁
+        }
+        test();
+        window.test();
+
+        //
+        let obj = {"名字":"何金昊"};
+        window.test.apply(obj);
+        window.test.call(obj);
+
+        function test2(a,b,c) {
+            console.log(this);
+            console.log(a+b+c);
+        }
+
+        window.test2.apply(obj,[1,2,3]);
+        window.test2.call(obj,6,2,6);
+
+        /**
+         * [description] jQuery对象就是一个伪数组
+         * 伪数组首先是对象，就是有 0 到 length - 1的下标，并且有length属性
+         *
+         * 伪数组和数组的区别
+         * 类型不一样，伪数组还是对象，不继承Array.prototype的属性值。
+         * 可以用 伪数组 instanceof Array 和 Object.prototype.slice.call(伪数组) 两种方法进行真伪的判断；
+         *
+         * 伪数组转换真数组
+         * 数组的slice方法什么都不传，就会遍历数组的所有元素放到新的数组里返回，借调后就可以将伪数组变为真数组
+         * Array.prototype.slice.call(伪数组)
+         * @return {[type]} [description]
+         *
+         * 真数组转换伪数组
+         * 借调数组的push方法，将真数组的所有数据都放到对象里
+         * [].push.apply(obj,arr)
+         * 有兼容性，不兼容ie8及以下
+         */
+    </script>
+</head>
+<body>
+
+</body>
+</html>

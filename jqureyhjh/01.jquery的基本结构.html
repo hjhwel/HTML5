@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>jquery的基本结构</title>
+</head>
+<body>
+<script>
+    /**
+     * jquery的本质是一个闭包
+     * 1.为什么使用闭包
+     * 闭包可以形成一个局部作用域，使用多个框架时可以避免出现冲突
+     * 2.jQuery如何让外部访问到自己内部定义的局部变量
+     * 在变量前加window来提升为全局变量
+     * 3.jQuery 为什么给自己传递一个window 参数
+     * 为了后期压缩代码方便
+     * 为了不用每次都去外面查找，优化查找速度
+     * 4.jquey为什么给自己传入一个undefined
+     * 为了后期方便压缩
+     * undefined在IE9以下是可以被修改的，所以为了保证内部的undefined是不被修改的、正确的，要传入接收一下正确的undefined
+     *
+     */
+    (function (window,undefined) {
+        var jQuery = function () {
+            //jQuery.fn就是jQuery.prototype
+            return new jQuery.prototype.init();
+        };
+        jQuery.prototype = function(){
+            constructor = jQuery;
+        };
+        jQuery.prototype.init.prototype = jQuery.prototype;
+        window.jQuery = window.$ = jQuery;
+    })(window);
+</script>
+</body>
+</html>

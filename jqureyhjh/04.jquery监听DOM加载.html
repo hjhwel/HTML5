@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>04.jquery监听DOM加载</title>
+    <style>
+        div{
+            width: 100px;
+            height: 100px;
+            background-color: #f00;
+        }
+    </style>
+    <script src="hjhjQuery/jquery-1.12.4.js"></script>
+    <script src="hjhjQuery/hjhjQ-1.0.0.js"></script>
+    <script>
+        // window.onload = function () {
+        //     //性能不好，需要等到DOM加载完毕并且必须所有资源也加载完毕才会执行
+        // }
+        // document.addEventListener('DOMContentLoaded',function () {
+        //     //性能更好，只需要等到DOM加载完毕并且不需要所有资源也加载完毕就会执行
+        //      // 但是ie9以下和欧朋浏览器低版本不支持
+        //     console.log('ddd');
+        // })
+        // ie9以下和欧朋浏览器低版本支持attachEvent，但是又监听不了DOMContentLoaded，不支持
+        // document.attachEvent("DOMContentLoaded",function () {
+        //     console.log('ddd');
+        // })
+        // // 所有监听另一个DOM的一个属性状态
+        // document.readyState属性
+        // 1.uninitialized - 还没有开始载入
+        // 2.loading - 开始载入
+        // 3.interactive - 已经加载，文档可以和用户进行交互
+        // 4.complete - 载入完成
+        // onreadystatechange 用来监听document.readyState属性状态的改变
+        // document.attachEvent("onreadystatechange",function () {
+        //     if (document.readyState === "complete") {
+        //         console.log("jjj");
+        //     }
+        // })
+        //
+        // $(function () {
+        //     console.log($('div'));
+        // })
+        // hjh(function () {
+        //     console.log(hjh('div'));
+        // })
+    </script>
+
+
+
+</head>
+<body>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+</body>
+</html>

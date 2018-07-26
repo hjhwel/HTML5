@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>10.jqueryDOM操作方法</title>
+    <!--<script src="hjhjQuery/hjhjQ-1.0.0.js"></script>-->
+    <script src="hjhjQuery/jquery-1.12.4.js"></script>
+</head>
+<body>
+<button>添加节点</button>
+<ul>
+    <p>ddd</p>
+    <li>我是第1个li</li>
+    <li>我是第2个li</li>
+    <li>我是第3个li</li>
+</ul>
+<ul>
+    <p>ddd</p>
+    <li>我是第1个li</li>
+    <li>我是第2个li</li>
+    <li>我是第3个li</li>
+</ul><ul>
+    <p>ddd</p>
+    <li>我是第1个li</li>
+    <li>我是第2个li</li>
+    <li>我是第3个li</li>
+</ul><ul>
+    <p>ddd</p>
+    <li>我是第1个li</li>
+    <li>我是第2个li</li>
+    <li>我是第3个li</li>
+</ul>
+
+
+<div>我是div</div>
+<script>
+    // var $li = $('<li>我是新增的li</li>');
+    // var btn = document.getElementsByTagName("button")[0];
+    // btn.onclick = function () {
+    //     console.log($('ggp').insertBefore($('ul')));
+    // }
+
+
+    var $li = $('<li>我是新增的li</li>');
+    var btn = document.getElementsByTagName("button")[0];
+    btn.onclick = function () {
+        console.log($('ul').before($('ddd')));
+    }
+
+
+    // var $li = hjh('<li>我是新增的li</li>');
+    // var btn = document.getElementsByTagName("button")[0];
+    // btn.onclick = function () {
+    //     console.log(hjh('pff').insertBefore(hjh('ul')));
+    // }
+
+    // var $li = hjh('<li>我是新增的li</li>');
+    // var btn = document.getElementsByTagName("button")[0];
+    // btn.onclick = function () {
+    //     console.log(hjh('ul').before(hjh('ddd')));
+    // }
+</script>
+</body>
+</html>

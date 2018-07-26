@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>03.jquery的extend方法</title>
+    <script>
+        // 定义一个构造函数
+        function hjh() {
+
+        }
+        /*
+        hjh.extend = function(obj){
+            // 此时this就是hjh这个类
+            console.log(this);
+
+            //外部传入对象后通过遍历就可以将对象的键取出来绑定给类上,则键对应的函数方法也就成为了类的静态方法，
+            //可以用类直接调用
+            for (var key in obj){
+                this[key] = obj[key];
+            }
+        };
+        hjh.extend({
+            isTest:function () {
+                console.log('test')
+            }
+        });
+        hjh.isTest()
+        */
+        /*
+        hjh.prototype.extend = function (obj) {
+            //谁调用就是谁，则this还是hjh这个对象
+            // console.log(this)
+            //外部传入对象后通过遍历就可以将对象的键取出来绑定给对象上,则键对应的函数方法也就成为了对象的实例方法，
+            //可以用类直接调用
+            for (var key in obj){
+                this[key] = obj[key];
+            }
+        }
+        var h = new hjh();
+        h.extend({
+            isDemo:function () {
+                console.log('demo')
+            }
+        });
+        h.isDemo();
+        */
+
+        hjh.extend = hjh.prototype.extend = function (obj) {
+            // 类调用this指向类
+            //外部传入对象后通过遍历就可以将对象的键取出来绑定给类上,则键对应的函数方法也就成为了类的静态方法，
+            // 对象调用this指向对象
+            //外部传入对象后通过遍历就可以将对象的键取出来绑定给对象上,则键对应的函数方法也就成为了对象的实例方法，
+            for (var key in obj){
+                this[key] = obj[key];
+            }
+        };
+        //类调用，this就是这个类
+        hjh.extend()
+        var h = new hjh()
+        //对象调用，this就是这个对象
+        h.extend()
+    </script>
+</head>
+<body>
+
+</body>
+</html>
