@@ -143,7 +143,6 @@
      * 静态方法太多，不利于后期维护
      * 仿照jQuery进行分类整理
      * 用extend :延伸、扩展的意思
-     *
      */
     //定义extend静态方法
     hjh.extend = hjh.prototype.extend = function (obj) {
@@ -155,7 +154,8 @@
             this[key] = obj[key]
         }
     };
-    // 调用extend静态方法
+    // 调用extend静态方法,
+    // 工具方法
     hjh.extend({
         /**
          * 入口函数，等待页面加载完毕后执行回调函数
@@ -304,9 +304,50 @@
             }
             // 默认返回空数组
             return res;
+        },
+        /**
+         * 获取指定元素的下一个兄弟节点
+         * @param n 指定元素 必须是原生
+         * @returns {Node | SVGElementInstance | ActiveX.IXMLDOMNode | (() => (Node | null))}
+         */
+        get_nextsibling: function (n) {
+            var x = n.nextSibling;
+            while (x != null && x.nodeType!=1)
+            {
+                x=x.nextSibling;
+            }
+            return x;
+        },
+        /**
+         * 获取指定元素的上一个兄弟节点
+         * @param n 指定元素 必须是原生
+         * @returns {Node | SVGElementInstance | (() => (Node | null)) | ActiveX.IXMLDOMNode}
+         */
+        get_previoussibling: function (n) {
+            var x=n.previousSibling;
+            while (x != null && x.nodeType!=1)
+            {
+                x=x.previousSibling;
+            }
+            return x;
+        },
+        /**
+         * 获取dom元素的样式
+         * @param dom 元素
+         * @param styleName 样式名
+         * @returns {*} 返回值
+         */
+        getStyle : function (dom,styleName) {
+            if (window.getComputedStyle){
+                return window.getComputedStyle(dom)[styleName];
+            } else{
+                return dom.currentStyle[styleName];
+            }
         }
     });
+
     // 动态添加对象方法，调用hjh.prototype.extend（），传入对象
+    // DOM 相关方法
     hjh.prototype.extend({
         /**
          * empty ==> 清空指定元素中的所有内容
@@ -336,7 +377,7 @@
                     // 先找到子元素对应的父元素
                     var parent = value.parentNode;
                     // 调用父元素的removeChild方法
-                    parent.removeChild(value);
+                    parent && parent.removeChild(value);
                 });
             } else {
                 var $this = this;
@@ -400,7 +441,7 @@
             }
         },
         /**
-         * 将元素添加到指定元素内部的后面
+         * 元素.appendTo.指定元素  ==>将元素添加到指定元素内部的最后面
          * @param sele 指定元素
          * @returns {*} 返回所有添加的元素
          */
@@ -429,7 +470,7 @@
             return hjh(res);
         },
         /**
-         * 将元素添加到指定元素内部的最前面
+         * 元素.prependTo.指定元素  ==>将元素添加到指定元素内部的最前面
          * @param sele 指定元素
          * @returns {*} 返回所有添加的元素
          */
@@ -458,9 +499,9 @@
             return hjh(res);
         },
         /**
-         * append 给元素内部后面添加
-         * @param sele 要添加的内容
-         * @returns {append} 返回调用的元素
+         * 指定元素.append.元素  ==>将元素添加到指定元素内部的最后面
+         * @param sele 要添加的元素
+         * @returns {append} 返回调用的指定元素
          */
         append :function (sele) {
             // 如果是字符串，直接添加到元素内部的后面
@@ -475,9 +516,9 @@
             return this;
         },
         /**
-         * prepend 给元素内部前面添加
-         * @param sele 要添加的内容
-         * @returns {append} 返回调用的元素
+         * 指定元素.prepend.元素  ==>将元素添加到指定元素内部的最前面
+         * @param sele 要添加的元素
+         * @returns {prepend} 返回调用的元素
          */
         prepend :function (sele) {
             // 如果是字符串，直接添加到元素内部的后面
@@ -493,28 +534,30 @@
             return this;
         },
         /**
-         * prepend 元素.insertBefore.指定元素  ==>将元素添加到指定元素外部的前面
+         * 元素.insertBefore.指定元素  ==>将元素添加到指定元素外部的前面
          * @param sele 要添加的内容
-         * @returns {append} 返回调用的元素
+         * @returns {*}
          */
         insertBefore : function (sele) {
-            // 获取父元素
-            var parent = sele.get(0).parentNode;
+            // 全部转为hjh对象
+            var hjhSele = hjh(sele);
             var hjhThis = this;
             var res = [];
             // 遍历所有指定元素
-            hjh.each(sele,function (key,value) {
+            hjhSele.each(function (key,value) {
+                // 获取父元素
+                var parent = value.parentNode;
                 // 遍历要传入的元素
                 hjh.each(hjhThis,function (k,v) {
                     // 判断是不是第0个要被传入的元素
                     if (key === 0){
-                        // 直接传到最后面
-                        parent.insertBefore(v,value);
+                        // 直接传到最前面面
+                        parent && parent.insertBefore(v,value);
                         res.push(v);
                     } else{
                         // 先克隆再添加
                         var temp = v.cloneNode(true);
-                        parent.insertBefore(temp,value);;
+                        parent && parent.insertBefore(temp,value);
                         res.push(temp);
                     }
                 })
@@ -527,11 +570,359 @@
          * @returns {before} 返回所有指定元素
          */
         before : function (sele) {
-            sele.insertBefore(this);
+            // 全部转为hjh对象
+            var hjhSele = hjh(sele);
+            var hjhThis = this;
+            // 遍历所有指定元素
+            hjhSele.each(function (key,value) {
+                // 遍历要传入的元素
+                hjh.each(hjhThis,function (k,v) {
+                    // 获取父元素
+                    var parent = v.parentNode;
+                    // 判断是不是第0个要被传入的元素
+                    if (k === hjhThis.length - 1){
+                        // 直接传到最前面面
+                        parent.insertBefore(value,v);
+                    } else{
+                        // 先克隆再添加
+                        var temp = value.cloneNode(true);
+                        parent.insertBefore(temp,v);
+                    }
+                })
+            });
+            return this;
+        },
+        /**
+         * 元素.insertAfter.指定元素  ==>将元素添加到指定元素外部的后面
+         * @param sele 要添加的内容
+         * @returns {*} 返回所有添加的元素
+         */
+        insertAfter : function (sele) {
+            // 全部转为hjh对象
+            var hjhSele = hjh(sele);
+            var res = [];
+            // 遍历要插入的元素
+            this.each(function (k,v) {
+                // 遍历被插入的指定元素
+                hjhSele.each(function (key,value) {
+                    // 获取父元素
+                    var parent = value.parentNode;
+                    var next_node = hjh.get_nextsibling(value);
+                    // 最后一个被插入的指定元素，直接插入
+                    if (key === sele.length - 1){
+                        parent.insertBefore(v,next_node);
+                        res.push(v);
+                    } else {
+                        // 指定元素有多个，就先将元素克隆再进行插入
+                        var temp = v.cloneNode(true);
+                        parent.insertBefore(temp,next_node);
+                        res.push(temp)
+                    }
+                });
+            });
+            return hjh(res);
+        },
+        /**
+         *  指定元素.after.元素  ==>将元素添加到指定元素外部的后面
+         * @param sele 元素
+         * @returns {after} 返回所有指定元素
+         */
+        after : function (sele) {
+            // 全部转为hjh对象
+            var hjhSele = hjh(sele);
+            var hjhThis = this;
+            // 遍历要插入的元素
+            hjhSele.each(function (k,v) {
+                // 遍历被插入的指定元素
+                hjhThis.each(function (key,value) {
+                    // 获取父元素
+                    var parent = value.parentNode;
+                    var next_node = hjh.get_nextsibling(value);
+                    // 最后一个被插入的指定元素，直接插入
+                    if (key === hjhThis.length - 1){
+                        parent.insertBefore(v,next_node);
+                    } else {
+                        // 指定元素有多个，就先将元素克隆再进行插入
+                        var temp = v.cloneNode(true);
+                        parent.insertBefore(temp,next_node);
+                    }
+                });
+            });
+            return this;
+        },
+        /**
+         * 指定元素.replaceAll.元素  ==>将元素替换为指定元素
+         * @param sele 被替换元素
+         * @returns {*} 替换后的所有元素
+         */
+        replaceAll : function (sele) {
+           // 将传入的sele转为hjh对象
+            var hjhSele = hjh(sele);
+            var hjhThis = this;
+            var res = [];
+           // 遍历被替换的元素
+            hjhThis.each(function (k,v) {
+                // 遍历替换的元素
+                hjhSele.each(function (key,value) {
+                    // 判断是不是第一个
+                    if (key === 0){
+                        // 先插入到被替换的前面
+                        hjh(v).insertBefore(value);
+                        res.push(v);
+                    }else{
+                        // 先克隆再插入
+                        var temp = v.cloneNode(true);
+                        hjh(temp).insertBefore(value);
+                        res.push(temp);
+                    }
+                })
+            });
+            // 插入完成后删除被替换的元素
+            hjh(sele).remove();
+            return hjh(res);
+        },
+        /**
+         * 元素.replaceAll.指定元素  ==>将元素替换为指定元素
+         * @param sele 指定元素
+         * @returns {replaceWith} 被替换的所有元素
+         */
+        replaceWith : function (sele) {
+            // 判断是不是函数
+            var str = hjh.isFunction(sele)?sele():sele;
+            // 判断是不是字符串
+            if (hjh.isString(str)) {
+                this.each(function (key,value) {
+                    var parent = value.parentNode;
+                    // 判断是不是HTML元素
+                    var tex = hjh.isHTML(str)?hjh(str).get(0):document.createTextNode(str);
+                    parent.insertBefore(tex,value);
+                });
+            }else {
+                // 是hjh对象
+                this.each(function (key,value) {
+                    // 遍历替换的元素
+                    hjh(sele).each(function (k,v) {
+                        // 判断是不是第一个
+                        if (key === 0){
+                            // 先插入到被替换的前面
+                            hjh(v).insertBefore(value);
+                            res.push(v);
+                        }else{
+                            // 先克隆再插入
+                            var temp = v.cloneNode(true);
+                            hjh(temp).insertBefore(value);
+                            res.push(temp);
+                        }
+                    })
+                });
+            }
+            this.remove();
             return this;
         }
     });
+    
+    //动态添加 筛选相关方法
+    hjh.prototype.extend({
+        /**
+         *  指定元素.next.选择器 找到指定元素的紧贴的下一个兄弟元素
+         * @param selector 对找到的兄弟元素进行筛选，符合条件的被找出
+         * @returns {*} 返回找到的符合条件的元素
+         */
+        next : function (selector) {
+            var hjhThis = this;
+            var sele = hjh(selector);
+            var res = [];
+            if (arguments.length === 0){
+                hjhThis.each(function () {
+                    var temp = hjh.get_nextsibling(this);
+                    temp && res.push(temp);
+                })
+            }else {
+                hjhThis.each(function () {
+                    var temp = hjh.get_nextsibling(this);
+                    sele.each(function () {
+                        if (temp === this) {
+                            temp && res.push(temp);
+                        }
+                    })
+                })
+            }
+            return hjh(res)
+        },
+        /**
+         *  指定元素.prev.选择器 找到指定元素的紧贴的上一个兄弟元素
+         * @param selector 对找到的兄弟元素进行筛选，符合条件的被找出
+         * @returns {*} 返回找到的符合条件的元素
+         */
+        prev : function (selector) {
+            var hjhThis = this;
+            var sele = hjh(selector);
+            var res = [];
+            if (arguments.length === 0){
+                hjhThis.each(function () {
+                    var temp = hjh.get_previoussibling(this);
+                    temp && res.push(temp);
+                })
+            }else {
+                hjhThis.each(function () {
+                    var temp = hjh.get_previoussibling(this);
+                    sele.each(function () {
+                        if (temp === this) {
+                            temp && res.push(temp);
+                        }
+                    })
+                })
+            }
+            return hjh(res)
+        }
 
+    });
+
+    // 动态添加 属性相关方法
+    hjh.prototype.extend({
+        /**
+         * 元素.attr.属性节点 操作属性节点
+         * @param attr 属性节点名
+         * @param value 属性节点值
+         * @returns {*} 传属性节点名就返回找到的第一个元素对应的属性节点值，
+         * 传两个就设置找到的所有元素的对应的属性节点，并返回设置后的所有元素
+         * 可以传对象。
+         */
+        attr : function (attr,value) {
+            // 判断是不是字符串
+            if (hjh.isString(attr)){
+                // 判断有几个值
+                if (arguments.length === 1){
+                    // 获取第一个元素的属性节点并返回
+                    var attrVal = this[0].getAttribute(attr);
+                    return attrVal?attrVal:attrVal===null?undefined:attr;
+                }else{
+                    this.each(function (key,ele) {
+                        ele.setAttribute(attr,value);
+                    })
+                }
+            }
+            // 判断是不是对象
+            else if (hjh.isObject(attr)){
+                var hjhThis = this;
+                // 遍历传入的对象,取出对应的属性节点名和属性节点值
+                hjh.each(attr,function (k,v) {
+                    // 遍历要修改的对象
+                    hjhThis.each(function () {
+                        this.setAttribute(k,v);
+                    })
+                })
+            }
+            return this;
+        },
+        /**
+         * 元素.prop.属性 操作属性
+         * @param attr 属性名
+         * @param value 属性值
+         * @returns {*} 传属性名就返回找到的第一个元素对应的属性值，
+         * 传两个就设置找到的所有元素的对应的属性，并返回设置后的所有元素
+         * 可以传对象。
+         * 也可以操作属性节点，属性值为布尔就用prop,否则就用attr
+         */
+        prop : function (attr,value) {
+            // 判断是不是字符串
+            if (hjh.isString(attr)){
+                // 判断有几个值
+                if (arguments.length === 1){
+                    // 获取第一个元素的属性节点并返回
+                    return this[0][attr];
+                }else{
+                    this.each(function (key,ele) {
+                        ele[attr] = value;
+                    })
+                }
+            }
+            // 判断是不是对象
+            else if (hjh.isObject(attr)){
+                var hjhThis = this;
+                // 遍历传入的对象,取出对应的属性节点名和属性节点值
+                hjh.each(attr,function (k,v) {
+                    // 遍历要修改的对象
+                    hjhThis.each(function () {
+                        this[k] = v;
+                    })
+                })
+            }
+            return this;
+        },
+        /**
+         * 元素.css.样式 不传值获取、传值设置元素的样式
+         * @param styleName 样式名，或者直接传对象
+         * @param value 样式值 不传就是获取
+         * @returns {*} 返回调用者
+         */
+        css : function (styleName,value) {
+            // 判断是不是字符串
+            if (hjh.isString(styleName)){
+                // 判断有几个值
+                if (arguments.length === 1){
+                    // 获取第一个元素的属性节点并返回
+                    return hjh.getStyle(this[0],styleName);
+                }else{
+                    this.each(function (key,ele) {
+                        ele.style[styleName] = value;
+                    })
+                }
+            }
+            // 判断是不是对象
+            else if (hjh.isObject(styleName)){
+                var hjhThis = this;
+                // 遍历传入的对象,取出对应的属性节点名和属性节点值
+                hjh.each(styleName,function (k,v) {
+                    // 遍历要修改的对象
+                    hjhThis.each(function () {
+                        this.style[k] = v;
+                    })
+                })
+            }
+            return this;
+        },
+        /**
+         * 元素.val() 获取或者设置value 的值
+         * @param content 不传就获取，传入就修改
+         * @returns {*} 返回调用者
+         */
+        val : function (content) {
+            // 判断有没有传值
+            if (arguments.length === 0){
+                // 没传就返回获取到的第一个元素的value值
+                return this[0].value;
+            } else {
+                // 遍历元素，修改所有找到的元素的value值
+                this.each(function (k,v) {
+                    this.value = content;
+                })
+            }
+            return this;
+        },
+
+        hasClass : function (classname) {
+            var flag = false;
+            if (arguments.length === 0){
+                return flag;
+            } else{
+                this.each(function (k,v) {
+                    var className = " " + v.className + " ";
+                    classname = " " + classname + " ";
+                    if (className.indexOf(classname) !== -1){
+                        flag = true;
+                        return false;
+                    }
+                })
+                return flag;
+            }
+        }
+    });
     hjh.prototype.init.prototype = hjh.prototype;
     window.hjh = window.HJH = window.hjH = window.hJh = window.Hjh = window.h = hjh;
 })(window);
+
+
+
+
+

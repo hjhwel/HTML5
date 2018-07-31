@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>10.jqueryDOM操作方法</title>
-    <!--<script src="hjhjQuery/hjhjQ-1.0.0.js"></script>-->
-    <script src="hjhjQuery/jquery-1.12.4.js"></script>
+    <script src="hjhjQuery/hjhjQ-1.0.0.js"></script>
+    <!--<script src="hjhjQuery/jquery-1.12.4.js"></script>-->
 </head>
 <body>
 <button>添加节点</button>
@@ -37,27 +37,60 @@
     // var $li = $('<li>我是新增的li</li>');
     // var btn = document.getElementsByTagName("button")[0];
     // btn.onclick = function () {
-    //     console.log($('ggp').insertBefore($('ul')));
+    //     // console.log($('ggp').insertBefore($('ul')));
+    //     console.log($li.insertBefore($('ul')));
     // }
 
 
-    var $li = $('<li>我是新增的li</li>');
+    // var $li = $('<li>我是新增的li</li>');
+    // var btn = document.getElementsByTagName("button")[0];
+    // btn.onclick = function () {
+    //     console.log($li.insertAfter($('ul')));
+    // }
+
+    // var $li = $('<li>我是新增的li</li>');
+    // var btn = document.getElementsByTagName("button")[0];
+    // btn.onclick = function () {
+    //     console.log($('ul').before($('p')));
+    //     // console.log($('ul').before($li));
+    // }
+
+
+    // var $li = $('<li>我是新增的li</li>');
+    // var btn = document.getElementsByTagName("button")[0];
+    // btn.onclick = function () {
+    //     // console.log($('ul').after($('p')));
+    //     console.log($('ul').after($li));
+    // }
+
+
+    // var $li = hjh('<li>我是新增的li</li>');
+    // var btn = document.getElementsByTagName("button")[0];
+    // btn.onclick = function () {
+    //     // console.log(hjh('p').insertBefore(hjh('ul')));
+    //     console.log($li.insertBefore(hjh('ul')));
+    // }
+
+    // var $li = hjh('<li>我是新增的li</li>');
+    // var btn = document.getElementsByTagName("button")[0];
+    // btn.onclick = function () {
+    //     // console.log($li.insertAfter(hjh('ul')));
+    //     console.log(hjh('p').insertAfter(hjh('ul')));
+    // }
+
+    var $li = hjh('<li>我是新增的li</li>');
     var btn = document.getElementsByTagName("button")[0];
     btn.onclick = function () {
-        console.log($('ul').before($('ddd')));
+        // console.log(hjh('ul').before($li));
+        console.log(hjh('ul').before(hjh('p')));
     }
 
 
     // var $li = hjh('<li>我是新增的li</li>');
     // var btn = document.getElementsByTagName("button")[0];
     // btn.onclick = function () {
-    //     console.log(hjh('pff').insertBefore(hjh('ul')));
-    // }
-
-    // var $li = hjh('<li>我是新增的li</li>');
-    // var btn = document.getElementsByTagName("button")[0];
-    // btn.onclick = function () {
-    //     console.log(hjh('ul').before(hjh('ddd')));
+    //     // console.log(hjh('ul').after(hjh('p')));
+    //     console.log(hjh('ul').after($li));
     // }
 </script>
 </body>
