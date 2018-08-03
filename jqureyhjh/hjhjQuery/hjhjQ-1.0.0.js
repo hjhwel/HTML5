@@ -343,6 +343,20 @@
             } else{
                 return dom.currentStyle[styleName];
             }
+        },
+        /**
+         * 事件注册兼容写法
+         * @param dom 元素
+         * @param eventName 事件名
+         * @param callback 回调函数
+         */
+        addEvent : function (dom,eventName,callback) {
+            // 判断是否支持addEventListener方法
+            if (dom.addEventListener) {
+                dom.addEventListener(eventName,callback);
+            } else {
+                dom.attachEvent('on' + eventName,callback);
+            }
         }
     });
 
@@ -718,6 +732,33 @@
             }
             this.remove();
             return this;
+        },
+
+        clone : function (deep) {
+            var res = [];
+            // 深复制
+            if (deep){
+                this.each(function (key,ele) {
+                    var temp = ele.cloneNode(true);
+                    // 遍历元素中的eventCache对象
+                    hjh.each(ele.eventsCache,function (eventName,array) {
+                        // 遍历对应事件的数组
+                        hjh.each(array,function (index,method) {
+                            // 给复制的元素添加事件
+                            hjh(temp).on(eventName,method);
+                        })
+                    });
+                    res.push(temp);
+                })
+            } else {
+                // 浅复制
+                this.each(function (key,ele) {
+                    //原生js里的深复制不会复制事件
+                    var temp = ele.cloneNode(true);
+                    res.push(temp);
+                })
+            }
+            return hjh(res);
         }
     });
     
@@ -900,26 +941,190 @@
             }
             return this;
         },
-
+        /**
+         * 元素.hasClass.类名 判断元素是否有指定的类名
+         * @param classname 指定类名
+         * @returns {boolean} 返回真假
+         */
         hasClass : function (classname) {
+            // 定义旗帜
             var flag = false;
             if (arguments.length === 0){
+                // 不传参直接返回假
                 return flag;
             } else{
                 this.each(function (k,v) {
+                    // 添加空格
                     var className = " " + v.className + " ";
                     classname = " " + classname + " ";
+                    // 进行查找
                     if (className.indexOf(classname) !== -1){
                         flag = true;
                         return false;
                     }
-                })
+                });
                 return flag;
             }
+        },
+        /**
+         * 元素.addClass.类名 给找到的所有元素添加类名。
+         * 只添加没有的
+         * @param classname 类名 多个类名用空格隔开。
+         * @returns {addClass} 返回调用者
+         */
+        addClass : function (classname) {
+            if (arguments.length === 0) return this;
+            // 利用空格切割传进来的类名
+            var classnames= classname.split(' ');
+            // 遍历所有要添加的元素
+            this.each(function (key,ele) {
+                // 遍历所有传入的类名
+                hjh.each(classnames,function (k,v) {
+                    // 判断是否已经包含类名
+                    if (!hjh(ele).hasClass(v)) {
+                        // 取出类名拼接上新类名并重新赋值
+                        ele.className = ele.className + " " + v;
+                    }
+                });
+            });
+            return this;
+        },
+        /**
+         * 元素.removeClass.类名 删除找到的元素的指定类名
+         * 只删除有的
+         * @param classname 指定类名 不传就删除所有 ，多个用空格隔开
+         * @returns {removeClass} 返回调用者
+         */
+        removeClass : function (classname) {
+            if (arguments.length === 0) {
+                // 不传参就删除找到的元素的所有类
+                this.each(function () {
+                    this.className = '';
+                })
+            }else {
+                // 利用空格切割传进来的类名
+                var classnames= classname.split(' ');
+                // 遍历所有要删除的元素
+                this.each(function (key,ele) {
+                    // 遍历所有传入的类名
+                    hjh.each(classnames,function (k,v) {
+                        // 判断是否已经包含类名
+                        if (hjh(ele).hasClass(v)) {
+                            // 取出类名删除传入的类名并重新赋值
+                            ele.className = (" " + ele.className + " ").replace(" " + v + " "," ");
+                        }
+                    });
+                });
+                // 如果class全部是空格就转为空
+                this.each(function () {
+                    this.className = hjh.trimSpace(this.className);
+                })
+            }
+            return this;
+        },
+        /**
+         *  元素.toggle.类名 切换找到的元素的指定类名
+         * 有就删除，没有就添加
+         * @param classname 指定类名 多个用空格隔开，不传就删除所有类名
+         * @returns {toggleClass} 返回调用者
+         */
+        toggleClass : function (classname) {
+            if (arguments.length === 0) {
+                // 不传参就删除找到的元素的所有类
+                this.each(function () {
+                    this.className = '';
+                })
+            }else {
+                // 利用空格切割传进来的类名
+                var classnames= classname.split(' ');
+                // 遍历所有要删除的元素
+                this.each(function (key,ele) {
+                    // 遍历所有传入的类名
+                    hjh.each(classnames,function (k,v) {
+                        // 判断是否已经包含类名
+                        if (hjh(ele).hasClass(v)) {
+                            // 有就删除
+                            hjh(ele).removeClass(v);
+                        }else {
+                            // 没有就添加
+                            hjh(ele).addClass(v);
+                        }
+                    });
+                });
+                // 如果class全部是空格就转为空
+                this.each(function () {
+                    this.className = hjh.trimSpace(this.className);
+                })
+            }
+            return this;
         }
     });
+
+    // 动态添加 事件相关方法
+    hjh.prototype.extend({
+        /**
+         * 元素.on(事件类型，回调函数) 给找到的所有元素添加事件绑定
+         * @param eventName 事件名
+         * @param callback 回调函数
+         */
+        on : function (eventName,callback) {
+           //遍历取出所有元素
+            this.each(function (key,ele) {
+                // 判断是否有eventsCache属性
+                if (!ele.eventsCache){
+                    // 第一次是没有的，自定义一个属性
+                    ele.eventsCache = {};
+                }
+                //判断有没有eventName的属性
+                if (!ele.eventsCache[eventName]){
+                    // 添加一个
+                    ele.eventsCache[eventName] = [];
+                    // 调用push方法
+                    ele.eventsCache[eventName].push(callback);
+                    // 添加对应的方法
+                    hjh.addEvent(ele,eventName,function () {
+                        hjh.each(ele.eventsCache[eventName],function (k,m) {
+                            m.call(ele);
+                        })
+                    })
+                }else {
+                    ele.eventsCache[eventName].push(callback);
+                }
+            });
+            return this;
+        },
+        /**
+         * 元素.off(事件类型，回调函数) 给找到的所有元素解除事件绑定
+         * @param eventName 事件类型 不传解除所有
+         * @param callback 回调函数 只能传函数名
+         */
+        off : function (eventName,callback) {
+            // 没有传参就移除所有事件
+            if (arguments.length === 0){
+                this.each(function () {
+                    this.eventsCache = {};
+                })
+            } else if (arguments.length === 1){
+                // 移除指定类型的所有事件
+                this.each(function () {
+                    this.eventsCache[eventName] = [];
+                })
+            }else if (arguments.length === 2){
+                // 移除指定类型的指定事件
+                this.each(function (key,ele) {
+                    hjh.each(ele.eventsCache[eventName],function (k,v) {
+                        if (v === callback){
+                            ele.eventsCache[eventName].splice(k,1);
+                        }
+                    })
+                })
+            }
+            return this;
+        }
+    });
+
     hjh.prototype.init.prototype = hjh.prototype;
-    window.hjh = window.HJH = window.hjH = window.hJh = window.Hjh = window.h = hjh;
+    window.hjh = window.HJH = window.hjH = window.hJh = window.Hjh = window.h = $ = hjh;
 })(window);
 
 

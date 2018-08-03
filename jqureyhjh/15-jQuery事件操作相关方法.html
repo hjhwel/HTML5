@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>23-jQuery事件操作相关方法</title>
+    <script src="hjhjQuery/hjhjQ-1.0.0.js"></script>
+    <!--<script src="hjhjQuery/jquery-1.12.4.js"></script>-->
+    <script>
+        hjh(function () {
+            /*
+                1.on(type, callback): 注册事件
+                2.off(type, callback): 移出事件
+            */
+            /*
+            1.注册多个相同类型事件, 后注册的不会覆盖先注册的
+            2.注册多个不同类型事件, 后注册的不会覆盖先注册的
+            */
+
+            // $("button").on("click", function () {
+            //     alert("hello click1");
+            // });
+            //
+            // $("button").on("click", function () {
+            //     alert("hello click2");
+            // });
+            //
+            // $("button").on("mouseenter", function () {
+            //     alert("hello mouseenter");
+            // });
+            //
+            // $("button").on("mouseleave", function () {
+            //     alert("hello mouseleave");
+            // });
+
+
+            hjh("button").on("click", function () {
+                alert("hello click1");
+            });
+            function f1() {
+                alert("hello click2");
+            }
+            hjh("button").on("click",f1 );
+
+            hjh("button").on("mouseenter", function () {
+                alert("hello mouseenter");
+            });
+
+            hjh("button").on("mouseleave", function () {
+                alert("hello mouseleave");
+            });
+            hjh('p').on('click',function () {
+                hjh('button').off('click',f1);
+            })
+            // hjh('button').off();
+            /*
+            var btn = document.querySelector("button");
+            // btn.addEventListener("click", function (ev) {
+            //     alert("click1");
+            // });
+            // btn.attachEvent("onclick", function () {
+            //     alert("click1");
+            // });
+
+            function addEvent(dom, name, callBack) {
+                if(dom.addEventListener){
+                    dom.addEventListener(name, callBack);
+                }else{
+                    dom.attachEvent("on"+name, callBack);
+                }
+            }
+            addEvent(btn, "click", function () {
+                alert("click1");
+            })
+            */
+        });
+    </script>
+</head>
+<body>
+<p>ddd</p>
+<button>我是按钮1</button>
+<button>我是按钮2</button>
+</body>
+</html>
