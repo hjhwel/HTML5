@@ -357,6 +357,165 @@
             } else {
                 dom.attachEvent('on' + eventName,callback);
             }
+        },
+
+        // ajax 方法
+
+        /**
+         * ajax.get方式
+         * @param url 必填，请求地址
+         * @param data 可以是字符串或者数据
+         * @param success 成功后执行的回调函数，获取到的响应内容被传到里面
+         * @param dataType 获取到的数据类型，不写就是字符串，写了就是json对象
+         * @returns {XMLHttpRequest} 返回xhr 对象
+         */
+        get : function (url,data,success,dataType) {
+            //通过get方式发送ajax请求
+            //ie里缓存规则，同一个url结果是一样的，所有必须让自己的url不断地发生变化，才可以拿到
+            //服务器里最新的结果
+            var str;
+            if(hjh.isObject(data)){
+                data.t_m = new Date().getTime();
+                var arr = [];
+                hjh.each(data,function (key,value) {
+                    arr.push(encodeURIComponent(key) + '=' + encodeURIComponent(value));
+                });
+                str = arr.join("&");
+            }else if (hjh.isString(data)) {
+                str = data + "&t_m=" + new Date().getTime();
+            }else if(hjh.isFunction(data)){
+                success = data;
+            }
+            var xhr = new XMLHttpRequest();
+            xhr.open('get',url + '?' + str,true);
+            xhr.send();
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    if (xhr.status >= 200 && xhr.status <300 || xhr.status === 304) {
+                        if (dataType) {
+                            if(dataType.toUpperCase() === "TEXT"){
+                                success && success(xhr.responseText)
+                            }else if (dataType.toUpperCase() === "JSON"){
+                                success && success(JSON.parse(xhr.responseText))
+                            }else if (dataType.toUpperCase() === "XML") {
+                                success && success(xhr.responseXML)
+                            }
+                        }else{
+                            success && success(xhr.responseText)
+                        }
+                    }
+                }
+            };
+            return xhr;
+        },
+        /**
+         * ajax.post方式
+         * @param url 必填，请求地址
+         * @param data 可以是数据或者字符串
+         * @param success 成功后的回调函数
+         * @param dataType 获取到的数据类型，不写就是字符串，写了就是json对象
+         * @returns {XMLHttpRequest} 返回xhr 对象
+         */
+        post : function (url,data,success,dataType) {
+            //通过get方式发送ajax请求
+            //ie里缓存规则，同一个url结果是一样的，所有必须让自己的url不断地发生变化，才可以拿到
+            //服务器里最新的结果
+            var str;
+            if(hjh.isObject(data)){
+                var arr = [];
+                hjh.each(data,function (key,value) {
+                    arr.push(encodeURIComponent(key) + '=' + encodeURIComponent(value));
+                });
+                str = arr.join("&");
+            }else if (hjh.isString(data)) {
+                str = data;
+            }else if(hjh.isFunction(data)){
+                success = data;
+            }
+            var xhr = new XMLHttpRequest();
+            xhr.open('post',url,true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.send(str);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    if (xhr.status >= 200 && xhr.status <300 || xhr.status === 304) {
+                        if (dataType) {
+                            if(dataType.toUpperCase() === "TEXT"){
+                                success && success(xhr.responseText)
+                            }else if (dataType.toUpperCase() === "JSON"){
+                                success && success(JSON.parse(xhr.responseText))
+                            }else if (dataType.toUpperCase() === "XML") {
+                                success && success(xhr.responseXML)
+                            }
+                        }else{
+                            success && success(xhr.responseText)
+                        }
+                    }
+                }
+            };
+            return xhr;
+        },
+        /**
+         * ajax 方法
+         * @param options 传入对象
+         * @returns {XMLHttpRequest} 返回xhr对象
+         */
+        ajax : function (options) {
+            // 设置默认值
+            var url = options.url || "";
+            var data = options.data || "";
+            var type = options.type || "GET";
+            var dataType = options.dataType || 'text';
+            var success = options.success || '';
+            var xhr = new XMLHttpRequest();
+            var timer = null;
+            
+            if(hjh.isObject(data)){
+                data.t_m = new Date().getTime();
+                var arr = [];
+                hjh.each(data,function (key,value) {
+                    arr.push(encodeURIComponent(key) + '=' + encodeURIComponent(value));
+                });
+                data = arr.join("&");
+            }
+
+
+            if (type.toUpperCase() === "GET") {
+                xhr.open('get',url + '?' + data + "&t_m=" + new Date().getTime(),true);
+                xhr.send();
+            }else if (type.toUpperCase() === "POST") {
+                xhr.open('POST', url, true);
+                xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+                xhr.send(data);
+            }
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    if (xhr.status >= 200 && xhr.status <300 || xhr.status === 304) {
+                        clearInterval(timer);
+                        if (dataType) {
+                            if(dataType.toUpperCase() === "TEXT"){
+                                success && success(xhr.responseText)
+                            }else if (dataType.toUpperCase() === "JSON"){
+                                success && success(JSON.parse(xhr.responseText))
+                            }else if (dataType.toUpperCase() === "XML") {
+                                success && success(xhr.responseXML)
+                            }
+                        }else{
+                            success && success(xhr.responseText)
+                        }
+                    }
+                }
+            };
+
+            if (options.timeOut) {
+                timer = setInterval(function () {
+                    xhr.abort();
+                    console.log('请求超时');
+                    clearInterval(timer);
+                },options.timeOut)
+            }
+            return xhr;
         }
     });
 
@@ -1122,6 +1281,8 @@
             return this;
         }
     });
+    
+
 
     hjh.prototype.init.prototype = hjh.prototype;
     window.hjh = window.HJH = window.hjH = window.hJh = window.Hjh = window.h = $ = hjh;
